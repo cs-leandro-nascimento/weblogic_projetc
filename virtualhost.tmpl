@@ -1,0 +1,25 @@
+<VirtualHost *:80>
+    ServerName      %(SITE)s%(ENV)s.petrobras.com.br
+    DocumentRoot    ${APP_ROOT}/%(DOMAIN_NAME)s/docroot
+    WebLogicCluster %(CLUSTER)s
+
+    RewriteEngine  On
+    RewriteOptions InheritBefore
+
+    RewriteCond ${manutencao-%(DOMAIN_NAME)s:%(SITE)s|NOT-FOUND} !=NOT-FOUND
+    RewriteCond %%{REMOTE_ADDR} !${SERVER_INDISP_IP_BYPASS}
+    RewriteRule $ /manutencao/404.html [L,PT]
+
+    RewriteCond %%{REQUEST_URI} ^/(%(SITE)s/?)?$
+    RewriteRule $ /%(SITE)s/index.jsp [L,R=permanent]
+
+    RewriteCond %%{REQUEST_URI} ^/%(SITE)s(-.+)?/
+    RewriteRule $ - [L]
+
+    RewriteRule $ - [F]
+
+
+    CustomLog ${APP_ROOT}/%(DOMAIN_NAME)s/httplogs/%(SITE)s/access-%%Y%%m%%d-${HOSTONLY}.log combined
+    ErrorLog  ${APP_ROOT}/%(DOMAIN_NAME)s/httplogs/%(SITE)s/error-${HOSTONLY}.log
+</VirtualHost>
+

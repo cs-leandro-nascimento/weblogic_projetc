@@ -1,0 +1,25 @@
+<VirtualHost *:80>
+    ServerName      %(DOMAIN_NAME)s.petrobras.com.br
+    DocumentRoot    ${APP_ROOT}/%(DOMAIN_NAME)s/docroot
+    WebLogicCluster %(CLUSTER)s
+
+    MatchExpression /console
+    MatchExpression /sgwl
+
+    RewriteEngine  On
+    RewriteOptions InheritBefore
+
+    RewriteCond %%{REQUEST_URI} ^(/console|/sgwl)
+    RewriteRule $ - [L]
+
+    RewriteRule $ - [F]
+
+
+    CustomLog ${APP_ROOT}/%(DOMAIN_NAME)s/httplogs/default/access-%%Y%%m%%d-${HOSTONLY}.log combined
+    ErrorLog  ${APP_ROOT}/%(DOMAIN_NAME)s/httplogs/default/error-${HOSTONLY}.log
+</VirtualHost>
+
+
+RewriteMap    manutencao-%(DOMAIN_NAME)s txt:${APP_ROOT}/%(DOMAIN_NAME)s/httpconf/manutencao.txt
+Include       ${APP_ROOT}/%(DOMAIN_NAME)s/httpconf/*.cfg
+
